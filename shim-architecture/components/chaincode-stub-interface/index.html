@@ -1,0 +1,1078 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="This website contains the description of the internal architecture of Hyperledger Fabric.">
+      
+      
+      
+        <meta name="author" content="Christian Vecchiola">
+      
+      <link rel="shortcut icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.0">
+    
+    
+      
+        <title>ChaincodeStubInterface - Hyperledger Fabric Internals Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.89dc9fe3.min.css">
+      
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chaincodestubinterface" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../../.." title="Hyperledger Fabric Internals Documentation" class="md-header-nav__button md-logo" aria-label="Hyperledger Fabric Internals Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,8A3,3 0 0,0 15,5A3,3 0 0,0 12,2A3,3 0 0,0 9,5A3,3 0 0,0 12,8M12,11.54C9.64,9.35 6.5,8 3,8V19C6.5,19 9.64,20.35 12,22.54C14.36,20.35 17.5,19 21,19V8C17.5,8 14.36,9.35 12,11.54Z" /></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Hyperledger Fabric Internals Documentation
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              ChaincodeStubInterface
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/IBM/hlf-internals/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    IBM/hlf-internals
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Hyperledger Fabric Internals Documentation" class="md-nav__button md-logo" aria-label="Hyperledger Fabric Internals Documentation">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,8A3,3 0 0,0 15,5A3,3 0 0,0 12,2A3,3 0 0,0 9,5A3,3 0 0,0 12,8M12,11.54C9.64,9.35 6.5,8 3,8V19C6.5,19 9.64,20.35 12,22.54C14.36,20.35 17.5,19 21,19V8C17.5,8 14.36,9.35 12,11.54Z" /></svg>
+
+    </a>
+    Hyperledger Fabric Internals Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/IBM/hlf-internals/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    IBM/hlf-internals
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../license/" title="License" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Chaincode Management Overview
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Chaincode Management Overview" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Chaincode Management Overview
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../overview/chaincode-execution-model/" title="Chaincode Execution Model" class="md-nav__link">
+      Chaincode Execution Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../overview/peer-operating-modes/" title="Peer Operating Modes" class="md-nav__link">
+      Peer Operating Modes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../overview/secure-networking/" title="Secure Networking" class="md-nav__link">
+      Secure Networking
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Interaction Protocol
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Interaction Protocol" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Interaction Protocol
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../protocol/architecture-components/" title="Key Components" class="md-nav__link">
+      Key Components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../protocol/interaction-lifecycle/" title="Interaction Lifecycle" class="md-nav__link">
+      Interaction Lifecycle
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../protocol/messages/" title="Messages Exchanged" class="md-nav__link">
+      Messages Exchanged
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+    
+    <label class="md-nav__link" for="nav-5">
+      Shim Architecture
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Shim Architecture" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Shim Architecture
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5-2" type="checkbox" id="nav-5-2" checked>
+    
+    <label class="md-nav__link" for="nav-5-2">
+      Components
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Components" data-md-level="2">
+      <label class="md-nav__title" for="nav-5-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Components
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../shim/" title="Shim" class="md-nav__link">
+      Shim
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../handler/" title="Handler" class="md-nav__link">
+      Handler
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        ChaincodeStubInterface
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="ChaincodeStubInterface" class="md-nav__link md-nav__link--active">
+      ChaincodeStubInterface
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#characterisation" class="md-nav__link">
+    Characterisation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capabilities-and-message-mapping" class="md-nav__link">
+    Capabilities and Message Mapping
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../chaincode-stub/" title="ChaincodeStub" class="md-nav__link">
+      ChaincodeStub
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../other-components/" title="Other Components" class="md-nav__link">
+      Other Components
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5-3" type="checkbox" id="nav-5-3">
+    
+    <label class="md-nav__link" for="nav-5-3">
+      Interaction Flow
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Interaction Flow" data-md-level="2">
+      <label class="md-nav__title" for="nav-5-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Interaction Flow
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../interaction-flow/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../interaction-flow/transaction-processing/" title="Aysnchronous Transaction Processing" class="md-nav__link">
+      Aysnchronous Transaction Processing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../interaction-flow/talk-backs/" title="Managing Talk-backs with the Peer" class="md-nav__link">
+      Managing Talk-backs with the Peer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../interaction-flow/range-queries/" title="Range Queries and Iterators" class="md-nav__link">
+      Range Queries and Iterators
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../interaction-flow/chaincode-events/" title="Chaincode Events" class="md-nav__link">
+      Chaincode Events
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../execution-patterns/" title="Chaincode Execution Patterns" class="md-nav__link">
+      Chaincode Execution Patterns
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../security/" title="Securing the Chaincode Process" class="md-nav__link">
+      Securing the Chaincode Process
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../peer-architecture/" title="Peer Architecture" class="md-nav__link">
+      Peer Architecture
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../adding-new-languages/" title="Support for New Languages" class="md-nav__link">
+      Support for New Languages
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../about/" title="About" class="md-nav__link">
+      About
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#characterisation" class="md-nav__link">
+    Characterisation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capabilities-and-message-mapping" class="md-nav__link">
+    Capabilities and Message Mapping
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/IBM/hlf-internals/edit/master/docs/shim-architecture/components/chaincode-stub-interface.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="chaincodestubinterface">ChaincodeStubInterface</h1>
+<p>The <code>ChaincodeStubInterface</code> represents the interface to the transaction execution context for the smart contract. Implementations of this interface are responsible for providing the chaincode implementation with details about the execution context in which a transaction is invoked (i.e. channel id and other metadata) and for interacting with the peer for any talk back (i.e. ledger queries and cross-chaincode invocations).</p>
+<h2 id="characterisation">Characterisation</h2>
+<p>The <code>ChaincodeStubInteface</code> is defined in the file <a href="https://github.com/hyperledger/fabric-chaincode-go/blob/master/shim/interfaces.go">interfaces.go</a>. The capabilities exposes are a combination of:</p>
+<ul>
+<li>methods that resolve locally; and</li>
+<li>methods that involve the interaction with the peer.</li>
+</ul>
+<p>The inteface exposes a synchronous behaviour. This means that for all those methods that involve an interaction with the peer the control will be held back until the peer has responded to the request and the corresponding <code>ChaincodeMessage</code> has been processed by the handler to unpack the result and create any supporting component needed.</p>
+<h2 id="capabilities-and-message-mapping">Capabilities and Message Mapping</h2>
+<p>The table below provides an overview of all the methods exposed by the interface with a mapping to the corresponding <code>ChaincodeMessage</code> type sent, if any. It is respomsibility of the implementation of this interface to honor this contract and send the specified message for a correct execution of the interaction protocol.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Method</th>
+<th align="center">Is Local</th>
+<th align="center">Comments</th>
+<th align="center">Chaincode Message Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">GetArgs</td>
+<td align="center">Yes</td>
+<td align="center">Returns the arguments of the transaction invocation (function and args) as an array of bytes.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetStringArgs</td>
+<td align="center">Yes</td>
+<td align="center">Returns the arguments of the transaction invocation (function and args) as an array of strings.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetFunctionAndParameters</td>
+<td align="center">Yes</td>
+<td align="center">Returns the arguments of the transaction invocation (function and args).</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetArgsSlice</td>
+<td align="center">Yes</td>
+<td align="center">Returns the arguments of the transaction invocation (function and args) as a single byte array.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetTxID</td>
+<td align="center">Yes</td>
+<td align="center">Returns the unique identifier of the transaction as a string.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetChannelID</td>
+<td align="center">Yes</td>
+<td align="center">Returns the unique identifier of the channel as a string.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">InvokeChaincode</td>
+<td align="center">No</td>
+<td align="center">Invokes another chaincode installed on the same peer.</td>
+<td align="center">INVOKE_CHAINCODE</td>
+</tr>
+<tr>
+<td align="left">GetState</td>
+<td align="center">No</td>
+<td align="center">Retrieves the value of a key.</td>
+<td align="center">GET_STATE</td>
+</tr>
+<tr>
+<td align="left">PutState</td>
+<td align="center">No</td>
+<td align="center">Sets the value of a key.</td>
+<td align="center">PUT_STATE</td>
+</tr>
+<tr>
+<td align="left">DelState</td>
+<td align="center">No</td>
+<td align="center">Removes the specified key from the world state.</td>
+<td align="center">DEL_STATE</td>
+</tr>
+<tr>
+<td align="left">SetStateValidationParameter</td>
+<td align="center">No</td>
+<td align="center">Set the endorsement policy for the specified key (feature: state-based endorsements).</td>
+<td align="center">PUT_STATE_METADATA</td>
+</tr>
+<tr>
+<td align="left">GetStateValidationParameter</td>
+<td align="center">No</td>
+<td align="center">Retrieves the endorsement policy for the specified key (feature: state-based endorsements).</td>
+<td align="center">GET_STATE_METADATA</td>
+</tr>
+<tr>
+<td align="left">GetStateByRange</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over the keys within the identifier range.</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">GetStateByRangeWithPagination</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over the keys within the identifier range (paginated version).</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">GetStateByPartialCompositeKey</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over the set of keys that match the specified partial key.</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">GetStateByPartialCompositeKeyWithPagination</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over the keys matching the specified partial key (paginated version).</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">CreateCompositeKey</td>
+<td align="center">Yes</td>
+<td align="center">Creates a composite key with the supplied arguments.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">SplitCompositeKey</td>
+<td align="center">Yes</td>
+<td align="center">Splits the specified composite key into its components (objectType and attributes).</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetQueryResult</td>
+<td align="center">No</td>
+<td align="center">Performs a rich query against the state database and returns a range iterator over the result.</td>
+<td align="center">GET_QUERY_RESULT</td>
+</tr>
+<tr>
+<td align="left">GetQueryResultWithPagination</td>
+<td align="center">No</td>
+<td align="center">As above but with pagination.</td>
+<td align="center">GET_QUERY_RESULT</td>
+</tr>
+<tr>
+<td align="left">GetHistoryForKey</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over all the historical changes associated to a specified key.</td>
+<td align="center">GET_HISTORY_FOR_KEY</td>
+</tr>
+<tr>
+<td align="left">GetPrivateData</td>
+<td align="center">No</td>
+<td align="center">Returns the value of the specified key in the specified collection.</td>
+<td align="center">GET_STATE</td>
+</tr>
+<tr>
+<td align="left">GetPrivateDataHash</td>
+<td align="center">No</td>
+<td align="center">Returns the hash of the value of the specified key in the specified collection.</td>
+<td align="center">GET_PRIVATE_DATA_HASH</td>
+</tr>
+<tr>
+<td align="left">PutPrivateData</td>
+<td align="center">No</td>
+<td align="center">Sets the value of the specified key in the specified collection (when the transaction will be committed).</td>
+<td align="center">PUT_STATE</td>
+</tr>
+<tr>
+<td align="left">DelPrivateData</td>
+<td align="center">No</td>
+<td align="center">Removes the value of a specified key in the specified collection (when the transaction will be committed).</td>
+<td align="center">DEL_STATE</td>
+</tr>
+<tr>
+<td align="left">SetPrivateDataStateValidationParameter</td>
+<td align="center">No</td>
+<td align="center">Set the endorsement policy for the specified key in the specified collection (feature: state-based endorsements).</td>
+<td align="center">PUT_STATE_METADATA</td>
+</tr>
+<tr>
+<td align="left">GetPrivateDataStateValidationParameter</td>
+<td align="center">No</td>
+<td align="center">Retrieves the endorsement policy for the specified key in the specified collection (feature: state-based endorsements).</td>
+<td align="center">GET_STATE_METADATA</td>
+</tr>
+<tr>
+<td align="left">GetPrivateDataByRange</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over all the keys in the specified collection within the specified start and end key.</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">GetPrivateDataByPartialCompositeKey</td>
+<td align="center">No</td>
+<td align="center">Returns a range iterator over all the keys in the specified collection matching the specified partial key.</td>
+<td align="center">GET_STATE_BY_RANGE</td>
+</tr>
+<tr>
+<td align="left">GetPrivateDataQueryResult</td>
+<td align="center">No</td>
+<td align="center">Performs a rich query against the specified collection and returns a range iterator over the keys matching the given query.</td>
+<td align="center">GET_QUERY_RESULT</td>
+</tr>
+<tr>
+<td align="left">GetCreator</td>
+<td align="center">Yes</td>
+<td align="center">Returns the array of bytes representing the X.509 identity of the  agent/user submitting the transaction.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetBinding</td>
+<td align="center">Yes</td>
+<td align="center">Returns the transaction binding.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetTransient</td>
+<td align="center">Yes</td>
+<td align="center">Returns metadata associated to the transaction, which can be used for instance to implement application confidentiality (e.g. crypto material).</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left">N/A</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left">GetDecorations</td>
+<td align="center">Yes</td>
+<td align="center">Returns metadata added to the transaction by decorators of the peer. These may mutate the chaincode input  as a result of their function.</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left">N/A</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left">GetSignedProposal</td>
+<td align="center">Yes</td>
+<td align="center">Returns the signed proposal, which contains all the data elements of the transactio proposal.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">GetTxTimestamp</td>
+<td align="center">Yes</td>
+<td align="center">Returns the transaction timestamp of what the transaction was created.</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="left">SetEvent</td>
+<td align="center">Yes</td>
+<td align="center">Sets an event associated to the transaction.</td>
+<td align="center">N/A</td>
+</tr>
+</tbody>
+</table>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: April 15, 2020 13:57:25
+    
+  </small>
+</div>
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../handler/" title="Handler" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Handler
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../chaincode-stub/" title="ChaincodeStub" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                ChaincodeStub
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.36cbf620.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.00c583dd.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.7f7c8775.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
